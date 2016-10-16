@@ -11,6 +11,7 @@ from slack_utils import get_user_id, get_channel_id
 
 # TODO: load the classes dynamically
 from menus.mop import MOP
+from menus.finnut import FinnUt
 
 with open('slack_config.yaml', 'r') as stream:
     try:
@@ -35,19 +36,31 @@ if 'BOT_CHANNEL_ID' in conf:
 # set up slack connection
 slackc = SlackClient(API_TOKEN)
 
+# map the day of week numbers to the actual names, in swedish
+weekdays = {0: 'måndag', 1: 'tisdag', 2: 'onsdag', 3: 'torsdag', 4: 'fredag'}
+
 def post_lunch(dow, channel):
     """ Posts today's menu from all included restaurants """
     # don't post on weekends
     if dow > 4: return
 
-    resp = '*Lunch of the Day:*\n\n'
+    resp = '*Lunch of the Day (%s):*\n------------------------------------\n\n' % weekdays[dow]
     dishes = MOP().get_day(dow)
     resp += '*%s*\n' % MOP()
     for dish in dishes:
-        resp += '\t%s\n' % dish
+        resp += '- \t%s\n' % dish
+
+    dishes = FinnUt().get_day(dow)
+    resp += '*%s*\n' % FinnUt()
+    for dish in dishes:
+        resp += '- \t%s\n' % dish
 
     resp += '\nYours Truely,\nGeoffrey'
     #print (resp)
+    slackc.api_call('chat.postMessage', channel=channel, text=resp, as_user=True)
+
+def post_what(channel):
+    resp = "\"What\" ain't no country I've ever heard of. They speak English in What?"
     slackc.api_call('chat.postMessage', channel=channel, text=resp, as_user=True)
 
 def handle_command(command, channel):
@@ -65,6 +78,8 @@ def handle_command(command, channel):
         post_lunch(3, channel)
     elif command.startswith('friday'):
         post_lunch(4, channel)
+    elif command.startswith('what'):
+        post_what(channel)
 
     #resp = 'I am here and ready to serve!'
     #slackc.api_call('chat.postMessage', channel=channel, text=resp, as_user=True)
