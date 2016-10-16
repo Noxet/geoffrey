@@ -6,7 +6,7 @@ import yaml
 from slackclient import SlackClient
 import schedule
 
-from bot_utils import get_user_id, get_channel_id
+from slack_utils import get_user_id, get_channel_id
 
 with open('slack_config.yaml', 'r') as stream:
     try:
