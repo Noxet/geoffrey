@@ -70,11 +70,19 @@ if __name__ == '__main__':
     print ('BOT_ID:', get_user_id(slackc, BOT_NAME))
     print ('CHANNEL_ID:', get_channel_id(slackc, BOT_CHANNEL))
 
+    with open('geoffrey_config.yaml', 'r') as stream:
+        try:
+            gconf = yaml.load(stream)
+        except yaml.YAMLError as e:
+            print ('Could not parse geoffrey_config file')
+            print (e)
+            sys.exit(1)
+
     # seconds to sleep between reading
     READ_DELAY = 1
 
     # set up schedule for posting lunch
-    POST_TIME = conf['POST_TIME']
+    POST_TIME = gconf['POST_TIME']
     schedule.every().day.at(POST_TIME).do(post_daily_lunch)
 
     if slackc.rtm_connect():
