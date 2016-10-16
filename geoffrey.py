@@ -65,9 +65,8 @@ def post_lunch(dow, channel):
     #print (resp)
     slackc.api_call('chat.postMessage', channel=channel, text=resp, as_user=True)
 
-def post_what(channel):
-    resp = "\"What\" ain't no country I've ever heard of. They speak English in What?"
-    slackc.api_call('chat.postMessage', channel=channel, text=resp, as_user=True)
+def post_msg(msg, channel):
+    slackc.api_call('chat.postMessage', channel=channel, text=msg, as_user=True)
 
 def handle_command(command, channel):
     """ Handles mentions in channels """
@@ -85,10 +84,8 @@ def handle_command(command, channel):
     elif command.startswith('friday'):
         post_lunch(4, channel)
     elif command.startswith('what'):
-        post_what(channel)
-
-    #resp = 'I am here and ready to serve!'
-    #slackc.api_call('chat.postMessage', channel=channel, text=resp, as_user=True)
+        msg = "\"What\" ain't no country I've ever heard of. They speak English in What?"
+        post_msg(msg, channel)
 
 def parse_slack_output(slack_rtm_output):
     """ Parses slack output """
