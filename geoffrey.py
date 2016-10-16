@@ -3,10 +3,14 @@
 import sys
 import time
 import yaml
+import datetime
 from slackclient import SlackClient
 import schedule
 
 from slack_utils import get_user_id, get_channel_id
+
+# TODO: load the classes dynamically
+from menus.mop import MOP
 
 with open('slack_config.yaml', 'r') as stream:
     try:
@@ -31,23 +35,42 @@ if 'BOT_CHANNEL_ID' in conf:
 # set up slack connection
 slackc = SlackClient(API_TOKEN)
 
+def post_lunch(dow, channel):
+    """ Posts today's menu from all included restaurants """
+    # don't post on weekends
+    if dow > 4: return
 
-""" Posts today's menu from all included restaurant """
-def post_daily_lunch():
-    resp = 'Sorry, no lunch for you!'
-    slackc.api_call('chat.postMessage', channel=BOT_CHANNEL_ID, text=resp, as_user=True)
+    resp = '*Lunch of the Day:*\n\n'
+    dishes = MOP().get_day(dow)
+    resp += '*%s*\n' % MOP()
+    for dish in dishes:
+        resp += '\t%s\n' % dish
 
-""" Handles mentions in channels """
-def handle_command(command, channel):
-    if command.startswith('lunch'):
-        post_daily_lunch()
-        return
-    resp = 'I am here and ready to serve!'
-    print (channel)
+    resp += '\nYours Truely,\nGeoffrey'
+    #print (resp)
     slackc.api_call('chat.postMessage', channel=channel, text=resp, as_user=True)
 
-""" Parses slack output """
+def handle_command(command, channel):
+    """ Handles mentions in channels """
+    if command.startswith('today'):
+        today = datetime.datetime.today().weekday()
+        post_lunch(today, channel)
+    elif command.startswith('monday'):
+        post_lunch(0, channel)
+    elif command.startswith('tuesday'):
+        post_lunch(1, channel)
+    elif command.startswith('wednesday'):
+        post_lunch(2, channel)
+    elif command.startswith('thursday'):
+        post_lunch(3, channel)
+    elif command.startswith('friday'):
+        post_lunch(4, channel)
+
+    #resp = 'I am here and ready to serve!'
+    #slackc.api_call('chat.postMessage', channel=channel, text=resp, as_user=True)
+
 def parse_slack_output(slack_rtm_output):
+    """ Parses slack output """
     output_list = slack_rtm_output
     if output_list and len(output_list) > 0:
         for output in output_list:
@@ -60,15 +83,20 @@ def parse_slack_output(slack_rtm_output):
 if __name__ == '__main__':
     if BOT_ID == '':
         BOT_ID = get_user_id(slackc, BOT_NAME)
-    if BOT_ID == None:
-        print ('Error: Could not get the bot ID')
-        sys.exit(1)
+        if BOT_ID == None:
+            print ('Error: Could not get the bot ID')
+            sys.exit(1)
+    if BOT_CHANNEL_ID == '':
+        BOT_CHANNEL_ID = get_channel_id(slackc, BOT_CHANNEL)
+        if BOT_CHANNEL_ID == None:
+            print ('Error: Could not get the bot channel ID')
+            sys.exit(1)
 
     # the tag when the bot is mentioned
     AT_BOT = '<@%s>' % BOT_ID
 
-    print ('BOT_ID:', get_user_id(slackc, BOT_NAME))
-    print ('CHANNEL_ID:', get_channel_id(slackc, BOT_CHANNEL))
+    #print ('BOT_ID:', get_user_id(slackc, BOT_NAME))
+    #print ('CHANNEL_ID:', get_channel_id(slackc, BOT_CHANNEL))
 
     with open('geoffrey_config.yaml', 'r') as stream:
         try:
@@ -83,7 +111,8 @@ if __name__ == '__main__':
 
     # set up schedule for posting lunch
     POST_TIME = gconf['POST_TIME']
-    schedule.every().day.at(POST_TIME).do(post_daily_lunch)
+    today = datetime.datetime.today().weekday()
+    schedule.every().day.at(POST_TIME).do(post_lunch, today, BOT_CHANNEL_ID)
 
     if slackc.rtm_connect():
         print ('%s is ready to serve!' % BOT_NAME)
