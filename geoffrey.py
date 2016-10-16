@@ -12,6 +12,7 @@ from slack_utils import get_user_id, get_channel_id
 # TODO: load the classes dynamically
 from menus.mop import MOP
 from menus.finnut import FinnUt
+from menus.finnin import FinnIn
 
 with open('slack_config.yaml', 'r') as stream:
     try:
@@ -55,7 +56,12 @@ def post_lunch(dow, channel):
     for dish in dishes:
         resp += '- \t%s\n' % dish
 
-    resp += '\nYours Truely,\nGeoffrey'
+    dishes = FinnIn().get_day(dow)
+    resp += '*%s*\n' % FinnIn()
+    for dish in dishes:
+        resp += '- \t%s\n' % dish
+
+    resp += '\n_Yours Truely_,\nGeoffrey'
     #print (resp)
     slackc.api_call('chat.postMessage', channel=channel, text=resp, as_user=True)
 
