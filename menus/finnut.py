@@ -51,4 +51,6 @@ class FinnUt(Menu):
             self.get_week()
         
         dow_name = self.dow[dow]
+        if dow_name not in self.menu:
+            return ['404 - Food not found']
         return self.menu[dow_name]

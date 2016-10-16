@@ -50,10 +50,6 @@ class MOP(Menu):
             self.get_week()
         
         dow_name = self.dow[dow]
+        if dow_name not in self.menu:
+            return ['404 - Food not found']
         return self.menu[dow_name]
-
-
-if __name__ == '__main__':
-    mop = MOP()
-    mop.get_week()
-    print (mop.get_day(0))
