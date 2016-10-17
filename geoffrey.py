@@ -4,6 +4,7 @@ import sys
 import time
 import yaml
 import datetime
+import importlib
 from slackclient import SlackClient
 import schedule
 
@@ -14,11 +15,21 @@ from menus.mop import MOP
 from menus.finnut import FinnUt
 from menus.finnin import FinnIn
 
+# parse configuration file for slack
 with open('slack_config.yaml', 'r') as stream:
     try:
         conf = yaml.load(stream)
     except yaml.YAMLError as e:
         print ('Could not parse configuration file')
+        print (e)
+        sys.exit(1)
+
+# parse configuration file for geoffrey
+with open('geoffrey_config.yaml', 'r') as stream:
+    try:
+        gconf = yaml.load(stream)
+    except yaml.YAMLError as e:
+        print ('Could not parse geoffrey_config file')
         print (e)
         sys.exit(1)
 
@@ -34,6 +45,17 @@ if 'BOT_ID' in conf:
 if 'BOT_CHANNEL_ID' in conf:
     BOT_CHANNEL_ID = conf['BOT_CHANNEL_ID']
 
+# load the menu classes dynamically
+menu_classes = []
+for menu in gconf['MENUS']:
+    full_path = 'menus.%s' % menu
+    class_data = full_path.split('.')
+    mod_path = '.'.join(class_data[:-1])
+    class_str = class_data[-1]
+    mod = importlib.import_module(mod_path)
+    cls = getattr(mod, class_str)
+    menu_classes.append(cls)
+
 # set up slack connection
 slackc = SlackClient(API_TOKEN)
 
@@ -46,20 +68,12 @@ def post_lunch(dow, channel):
     if dow > 4: return
 
     resp = '*Lunch of the Day (%s):*\n------------------------------------\n\n' % weekdays[dow]
-    dishes = MOP().get_day(dow)
-    resp += '*%s*\n' % MOP()
-    for dish in dishes:
-        resp += '- \t%s\n' % dish
-
-    dishes = FinnUt().get_day(dow)
-    resp += '*%s*\n' % FinnUt()
-    for dish in dishes:
-        resp += '- \t%s\n' % dish
-
-    dishes = FinnIn().get_day(dow)
-    resp += '*%s*\n' % FinnIn()
-    for dish in dishes:
-        resp += '- \t%s\n' % dish
+    for menu in menu_classes:
+        menu_obj = menu()
+        dishes = menu_obj.get_day(dow)
+        resp += '*%s*\n' % menu_obj
+        for dish in dishes:
+            resp += '- \t%s\n' % dish
 
     resp += '\n_Yours Truely_,\nGeoffrey'
     #print (resp)
@@ -92,6 +106,7 @@ def parse_slack_output(slack_rtm_output):
     output_list = slack_rtm_output
     if output_list and len(output_list) > 0:
         for output in output_list:
+            # check if bot was mentioned in a channel
             if output and 'text' in output and AT_BOT in output['text']:
                 # return text after the @ mention, remove whitespace
                 return output['text'].split(AT_BOT)[1].strip().lower(), output['channel']
@@ -112,17 +127,6 @@ if __name__ == '__main__':
 
     # the tag when the bot is mentioned
     AT_BOT = '<@%s>' % BOT_ID
-
-    #print ('BOT_ID:', get_user_id(slackc, BOT_NAME))
-    #print ('CHANNEL_ID:', get_channel_id(slackc, BOT_CHANNEL))
-
-    with open('geoffrey_config.yaml', 'r') as stream:
-        try:
-            gconf = yaml.load(stream)
-        except yaml.YAMLError as e:
-            print ('Could not parse geoffrey_config file')
-            print (e)
-            sys.exit(1)
 
     # seconds to sleep between reading
     READ_DELAY = 1
