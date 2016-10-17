@@ -30,9 +30,11 @@ class FinnUt(Menu):
             date = menu['date'].split('-')
             weekday = datetime.date(int(date[0]), int(date[1]), int(date[2])).weekday()
             # skip weekends
-            if weekday > 4: continue
-            
+            if weekday > 4:
+                continue
             dow = self.dow[weekday]
+            if 'content' not in menu:
+                continue
             dishes = menu['content'].split('\n\n')
             # remove the newline for gluten-free etc. and put is between parantheses
             # yes, this is ugly a.f. TODO: make it pretty
