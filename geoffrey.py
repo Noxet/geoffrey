@@ -10,11 +10,6 @@ import schedule
 
 from slack_utils import get_user_id, get_channel_id
 
-# TODO: load the classes dynamically
-from menus.mop import MOP
-from menus.finnut import FinnUt
-from menus.finnin import FinnIn
-
 # parse configuration file for slack
 with open('slack_config.yaml', 'r') as stream:
     try:
