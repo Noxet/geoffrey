@@ -74,6 +74,12 @@ def post_lunch(dow, channel):
     #print (resp)
     slackc.api_call('chat.postMessage', channel=channel, text=resp, as_user=True)
 
+def update_lunch():
+    """ Update the menu, caching it """
+    for menu in menu_classes:
+        # the function caches the menu
+        menu().get_week()
+
 def post_msg(msg, channel):
     slackc.api_call('chat.postMessage', channel=channel, text=msg, as_user=True)
 
@@ -125,6 +131,9 @@ if __name__ == '__main__':
 
     # seconds to sleep between reading
     READ_DELAY = 1
+
+    UPDATE_TIME = gconf['UPDATE_TIME']
+    schedule.every().day.at(UPDATE_TIME).do(update_lunch)
 
     # set up schedule for posting lunch
     POST_TIME = gconf['POST_TIME']
