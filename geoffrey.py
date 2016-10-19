@@ -65,6 +65,9 @@ def post_lunch(dow, channel):
     resp = '*Lunch of the Day (%s):*\n------------------------------------\n\n' % weekdays[dow]
     for menu in menu_classes:
         menu_obj = menu()
+        # only show Avesta menu on fridays
+        if dow != 4 and 'Avesta' in str(menu_obj):
+            continue
         dishes = menu_obj.get_day(dow)
         resp += '*%s*\n' % menu_obj
         for dish in dishes:
