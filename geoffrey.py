@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import sys
+import os
 import time
 import yaml
 import datetime
@@ -10,8 +11,10 @@ import schedule
 
 from slack_utils import get_user_id, get_channel_id
 
+dir_path = os.path.dirname(os.path.realpath(__file__))
+
 # parse configuration file for slack
-with open('slack_config.yaml', 'r') as stream:
+with open('%s/slack_config.yaml' % dir_path, 'r') as stream:
     try:
         conf = yaml.load(stream)
     except yaml.YAMLError as e:
@@ -20,7 +23,7 @@ with open('slack_config.yaml', 'r') as stream:
         sys.exit(1)
 
 # parse configuration file for geoffrey
-with open('geoffrey_config.yaml', 'r') as stream:
+with open('%s/geoffrey_config.yaml' % dir_path, 'r') as stream:
     try:
         gconf = yaml.load(stream)
     except yaml.YAMLError as e:
@@ -66,6 +69,7 @@ def post_lunch(dow, channel):
     for menu in menu_classes:
         menu_obj = menu()
         # only show Avesta menu on fridays
+        # TODO: this should be entered in the config file
         if dow != 4 and 'Avesta' in str(menu_obj):
             continue
         dishes = menu_obj.get_day(dow)
@@ -76,6 +80,10 @@ def post_lunch(dow, channel):
     resp += '\n_Yours Truely_,\nGeoffrey'
     #print (resp)
     slackc.api_call('chat.postMessage', channel=channel, text=resp, as_user=True)
+
+def post_today(channel):
+    today = datetime.datetime.today().weekday()
+    post_lunch(today, channel)
 
 def update_lunch():
     """ Update the menu, caching it """
@@ -140,8 +148,7 @@ if __name__ == '__main__':
 
     # set up schedule for posting lunch
     POST_TIME = gconf['POST_TIME']
-    today = datetime.datetime.today().weekday()
-    schedule.every().day.at(POST_TIME).do(post_lunch, today, BOT_CHANNEL_ID)
+    schedule.every().day.at(POST_TIME).do(post_today, BOT_CHANNEL_ID)
 
     if slackc.rtm_connect():
         print ('%s is ready to serve!' % BOT_NAME)
