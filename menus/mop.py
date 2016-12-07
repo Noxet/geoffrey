@@ -35,8 +35,10 @@ class MOP(Menu):
             for menu_item in li.find('div', {'class': 'event-info'}).find_all('p'):
                 menu_items.append(menu_item.text.strip())
 
-            # add the list of dishes to the menu
-            self.menu[weekday] = menu_items
+            # add the list of dishes to the menu, but only if it doesn't already
+            # exist. Otherwise we'll overwrite the current menu with next week's
+            if weekday not in self.menu:
+                self.menu[weekday] = menu_items
         
         return self.menu
 
