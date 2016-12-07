@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 
 from menus.menu import Menu
 
-class FinnIn(Menu):
+class FinnInn(Menu):
 
     def __init__(self):
         self.url = 'http://www.finninn.se/lunch-meny/'
@@ -13,7 +13,7 @@ class FinnIn(Menu):
         self.dow = {0: 'måndag', 1: 'tisdag', 2: 'onsdag', 3: 'torsdag', 4: 'fredag'}
     
     def __repr__(self):
-        return "Finn In"
+        return "Finn Inn"
 
     def get_week(self):
         """
