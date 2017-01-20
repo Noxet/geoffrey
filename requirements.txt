@@ -1,8 +1,10 @@
 beautifulsoup4==4.5.1
 bs4==0.0.1
+html5lib==0.999999999
 PyYAML==3.12
 requests==2.12.3
 schedule==0.4.2
 six==1.10.0
 slackclient==1.0.2
+webencodings==0.5
 websocket-client==0.39.0
