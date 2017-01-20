@@ -34,17 +34,6 @@ class Edison(Menu):
                 txt += ': ' + dish.find('td', {'class': 'course_description'}).text.strip()
                 dishes.append(txt)
             self.menu[weekday] = dishes
-
-        #menu_list = soup.find('ul', {'class': 'menu-items'})
-        #for li in menu_list.find_all('li', recursive=False):
-        #    # get the day of week
-        #    weekday = li.find('div', {'class': 'grid2column'}).text.strip().lower()
-        #    # get the dishes of the day
-        #    dishes = li.find('div', {'class': 'item-description-menu'}).text
-
-        #    # add the list of dishes to the menu
-        #    self.menu[weekday] = dishes.strip().split('\n')
-        
         return self.menu
 
     def get_day(self, dow):
