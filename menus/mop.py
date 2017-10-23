@@ -13,7 +13,7 @@ class MOP(Menu):
         self.dow = {0: 'måndag', 1: 'tisdag', 2: 'onsdag', 3: 'torsdag', 4: 'fredag'}
     
     def __repr__(self):
-        return "Moroten och Piskan"
+        return ":carrot: Moroten och Piskan"
 
     def get_week(self):
         """

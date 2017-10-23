@@ -13,7 +13,7 @@ class FinnInn(Menu):
         self.dow = {0: 'måndag', 1: 'tisdag', 2: 'onsdag', 3: 'torsdag', 4: 'fredag'}
     
     def __repr__(self):
-        return "Finn Inn"
+        return ":finngiant: Finn Inn"
 
     def get_week(self):
         """
