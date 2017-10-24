@@ -13,7 +13,7 @@ class Edison(Menu):
         self.dow = {0: 'monday', 1: 'tuesday', 2: 'wednesday', 3: 'thursday', 4: 'friday'}
     
     def __repr__(self):
-        return "Edison"
+        return ":bulb: Edison"
 
     def get_week(self):
         """

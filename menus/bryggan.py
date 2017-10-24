@@ -13,7 +13,7 @@ class Bryggan(Menu):
         self.dow = {0: 'Måndag', 1: 'Tisdag', 2: 'Onsdag', 3: 'Torsdag', 4: 'Fredag'}
     
     def __repr__(self):
-        return "Bryggan Kök och Café"
+        return ":waterwave: Bryggan Kök och Café"
 
     def get_week(self):
         """
