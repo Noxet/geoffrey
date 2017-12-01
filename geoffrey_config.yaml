@@ -1,3 +1,11 @@
 UPDATE_TIME: "07:00"
 POST_TIME: "11:00"
-MENUS: ['mop.MOP', 'finninn.FinnInn', 'finnut.FinnUt', 'avesta.Avesta', 'bryggan.Bryggan', 'edison.Edison', 'inspira.Inspira']
+MENUS: [
+'mop.MOP', 
+'finninn.FinnInn', 
+'finnut.FinnUt', 
+'avesta.Avesta', 
+'bryggan.Bryggan', 
+#'edison.Edison', 
+'inspira.Inspira'
+]
