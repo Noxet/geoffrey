@@ -1,5 +1,7 @@
 
 import requests
+import collections
+
 from bs4 import BeautifulSoup
 
 from menus.menu import Menu
@@ -8,7 +10,7 @@ class Bryggan(Menu):
 
     def __init__(self):
         self.url = 'http://www.bryggancafe.se/veckans-lunch/'
-        self.menu = {}
+        self.menu = collections.defaultdict(list)
         # swedish day of week names
         self.dow = {0: 'Måndag', 1: 'Tisdag', 2: 'Onsdag', 3: 'Torsdag', 4: 'Fredag'}
     
@@ -45,10 +47,9 @@ class Bryggan(Menu):
                 continue
             
             # if we reach here, it was probably food, anything that starts with
-            # the string "Dagens:" is considered food.
-            if last_day and data.startswith('Dagens:'):
-                self.menu[last_day] = [data[7:].strip()]
-                last_day = None
+            # the string "Dagens:" or "Veg:" is considered food.
+            if last_day and (data.startswith('Dagens:') or data.startswith('Veg:')):
+                self.menu[last_day].append(data.strip())
         
         return self.menu
 
