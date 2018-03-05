@@ -77,7 +77,7 @@ def post_lunch(dow, channel):
         for dish in dishes:
             resp += '- \t%s\n' % dish
 
-    resp += '\n_Yours Truely_,\nGeoffrey'
+    resp += '\n_Yours Truly_,\nGeoffrey'
     #print (resp)
     slackc.api_call('chat.postMessage', channel=channel, text=resp, as_user=True)
 
