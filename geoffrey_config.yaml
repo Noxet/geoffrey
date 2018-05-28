@@ -9,3 +9,12 @@ MENUS: [
 #'edison.Edison', 
 'inspira.Inspira'
 ]
+WHITELIST: [
+]
+WHITELIST_ERROR_MESSAGES: [
+"Scanning individual for intelligence...\nThreshold not reached.\n*Access denied!*",
+"To quote Justin Bieber's 2015 hit song: \"Sorry\".\n*Access denied!*",
+"To permit or not permit, that is the question...\nLol ez.\n*Access denied!*",
+"Yeah, if you could just go ahead and follow the rules, that'd be great.\n*Access denied!*",
+"You look like someone that \"programs\" in MATLAB.\n*Access denied!*"
+]

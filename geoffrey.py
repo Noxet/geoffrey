@@ -3,6 +3,7 @@
 import sys
 import os
 import time
+import random
 import yaml
 import datetime
 import importlib
@@ -94,8 +95,15 @@ def update_lunch():
 def post_msg(msg, channel):
     slackc.api_call('chat.postMessage', channel=channel, text=msg, as_user=True)
 
-def handle_command(command, channel):
+def handle_command(command, channel, user):
     """ Handles mentions in channels """
+    if user not in gconf['WHITELIST']:
+        # users not in the whitelist receives a 'nice' response
+        error_msg_list = gconf['WHITELIST_ERROR_MESSAGES']
+        rnd_idx = random.randint(0, len(error_msg_list) - 1)
+        post_msg(error_msg_list[rnd_idx], channel)
+        return
+
     if command.startswith('today'):
         today = datetime.datetime.today().weekday()
         post_lunch(today, channel)
@@ -121,9 +129,10 @@ def parse_slack_output(slack_rtm_output):
             # check if bot was mentioned in a channel
             if output and 'text' in output and AT_BOT in output['text']:
                 # return text after the @ mention, remove whitespace
-                return output['text'].split(AT_BOT)[1].strip().lower(), output['channel']
+                # also return the channel and the user sending the message
+                return output['text'].split(AT_BOT)[1].strip().lower(), output['channel'], output['user']
 
-    return None, None
+    return None, None, None
 
 if __name__ == '__main__':
     if BOT_ID == '':
@@ -153,8 +162,8 @@ if __name__ == '__main__':
     if slackc.rtm_connect():
         print ('%s is ready to serve!' % BOT_NAME)
         while True:
-            cmd, chn = parse_slack_output(slackc.rtm_read())
-            if cmd and chn:
-                handle_command(cmd, chn)
+            cmd, chn, usr = parse_slack_output(slackc.rtm_read())
+            if cmd and chn and usr:
+                handle_command(cmd, chn, usr)
             schedule.run_pending()
             time.sleep(READ_DELAY)
