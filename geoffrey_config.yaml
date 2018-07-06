@@ -6,7 +6,7 @@ MENUS: [
 'finnut.FinnUt', 
 'avesta.Avesta', 
 'bryggan.Bryggan', 
-#'edison.Edison', 
+'edison.Edison', 
 'inspira.Inspira'
 ]
 WHITELIST: [
