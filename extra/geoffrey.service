@@ -1,0 +1,11 @@
+[Unit]
+Description=Geoffrey the Slack Butler
+After=multi-user.target
+
+[Service]
+Type=idle
+Restart=always
+ExecStart=/home/noxet/geoffrey/geoffrey.py
+
+[Install]
+WantedBy=multi-user.target
