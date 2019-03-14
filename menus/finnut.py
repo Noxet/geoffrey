@@ -23,7 +23,12 @@ class FinnUt(Menu):
             'dayofweek 2': [ ... ]
         }
         """
-        content = requests.get(self.url)
+        try:
+            content = requests.get(self.url)
+        except Exception:
+            # return empty menu in case of timeouts etc.
+            return dict()
+
         menu_list = content.json()
         for menu in menu_list:
             # date is in the form yyyy-mm-dd

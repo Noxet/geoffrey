@@ -25,7 +25,12 @@ class Bryggan(Menu):
             'dayofweek 2': [ ... ]
         }
         """
-        content = requests.get(self.url)
+        try:
+            content = requests.get(self.url, timeout=3)
+        except Exception:
+            # return empty menu in case of timeouts etc.
+            return dict()
+
         soup = BeautifulSoup(content.text, 'html.parser')
         # menu list
         menu_list = soup.find('div', {'class': 'et_pb_promo_description'})

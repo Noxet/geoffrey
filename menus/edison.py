@@ -23,7 +23,12 @@ class Edison(Menu):
             'dayofweek 2': [ ... ]
         }
         """
-        content = requests.get(self.url)
+        try:
+            content = requests.get(self.url, timeout=3)
+        except Exception:
+            # return empty menu in case of timeouts etc.
+            return dict()
+
         soup = BeautifulSoup(content.text, 'html5lib')
         # menu list
         for weekday in self.dow.values():

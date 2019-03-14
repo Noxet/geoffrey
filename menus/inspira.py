@@ -22,7 +22,12 @@ class Inspira(Menu):
             'dayofweek 2': [ ... ]
         }
         """
-        content = requests.get(self.url)
+        try:
+            content = requests.get(self.url)
+        except Exception:
+            # return empty menu in case of timeouts etc.
+            return dict()
+
         soup = BeautifulSoup(content.text, 'html.parser')
         # menu list
         menu_list = soup.find('div', {'class': 'owl-carousel'})
