@@ -27,7 +27,7 @@ with open('%s/slack_config.yaml' % dir_path, 'r') as stream:
 # parse configuration file for geoffrey
 with open('%s/geoffrey_config.yaml' % dir_path, 'r') as stream:
     try:
-        gconf = yaml.load(stream)
+        gconf = yaml.full_load(stream)
     except yaml.YAMLError as e:
         print ('Could not parse geoffrey_config file')
         print (e)
