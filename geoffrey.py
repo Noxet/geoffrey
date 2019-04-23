@@ -2,6 +2,7 @@
 
 import sys
 import os
+import logging
 import time
 import random
 import yaml
@@ -73,7 +74,11 @@ def post_lunch(dow, channel):
         # TODO: this should be entered in the config file
         if dow != 4 and 'Avesta' in str(menu_obj):
             continue
-        dishes = menu_obj.get_day(dow)
+        try:
+            dishes = menu_obj.get_day(dow)
+        except Exception:
+            logging.exception('Exception in post_lunch')
+            dishes = ['500 - Internal Food Poisoning']
         resp += '*%s*\n' % menu_obj
         for dish in dishes:
             resp += '- \t%s\n' % dish
@@ -135,6 +140,8 @@ def parse_slack_output(slack_rtm_output):
     return None, None, None
 
 if __name__ == '__main__':
+    logging.basicConfig(level='WARNING')
+
     if BOT_ID == '':
         BOT_ID = get_user_id(slackc, BOT_NAME)
         if BOT_ID == None:
