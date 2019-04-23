@@ -18,7 +18,7 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 # parse configuration file for slack
 with open('%s/slack_config.yaml' % dir_path, 'r') as stream:
     try:
-        conf = yaml.load(stream)
+        conf = yaml.full_load(stream)
     except yaml.YAMLError as e:
         print ('Could not parse configuration file')
         print (e)
